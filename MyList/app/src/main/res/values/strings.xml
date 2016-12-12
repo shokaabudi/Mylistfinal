@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">My List</string>
+    <string name="Manual">Manual List</string>
+    <string name="Saved">Saved Items </string>
+    <string name="action_add">Add Items</string>
+    <string name="action_clear">clear items</string>
+    <string name="action_save">save items</string>
+    <string name="title_activity_manual">Manual</string>
+    <string name="Auto">Auto List</string>
+
+
+</resources>
