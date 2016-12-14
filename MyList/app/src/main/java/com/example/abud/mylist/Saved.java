@@ -49,6 +49,7 @@ public class Saved extends AppCompatActivity {
         savedListsNames.addAll(manual.getArrayVal(getApplicationContext(), dbSave, savedListsKey));
         savedListsNames.addAll(manual.getArrayVal(getApplicationContext(), dbSaveAuto, savedListsKeyAuto));
         savedListsNamesManual.addAll(manual.getArrayVal(getApplicationContext(), dbSave, savedListsKey));
+
         Collections.sort(savedListsNames);
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, savedListsNames);
         savedItemsList.setAdapter(adapter);
@@ -66,11 +67,11 @@ public class Saved extends AppCompatActivity {
                     intent.putExtra("num", 1);
                     startActivity(intent);
                     finish();
-                }else {
+                } else{
 
                     Auto.setClass(Saved.this, Auto_Second.class);
-                    intent.putExtra("theListName", name);
-                    intent.putExtra("num", 1);
+                    Auto.putExtra("theListName", name);
+                    Auto.putExtra("num", 1);
                     startActivity(Auto);
                     finish();
                 }
@@ -109,5 +110,6 @@ public class Saved extends AppCompatActivity {
             }
         });
     }
+
 
     }

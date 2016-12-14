@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -33,6 +34,7 @@ public class Auto_Second extends AppCompatActivity {
     ArrayList<String> saveList = null;
     ArrayList<String> mySavedList = new ArrayList<>();
     ArrayAdapter<String> adapter = null;
+    SparseBooleanArray checked;
     String db="ShopingList";
     String key="Values";
     String dbSave="SaveAuto";
@@ -50,13 +52,23 @@ public class Auto_Second extends AppCompatActivity {
         setContentView(R.layout.activity_auto__second);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Shopping List");
+        getSupportActionBar().setTitle("Auto List");
         toolbar.setTitleTextColor(Color.parseColor("#FFFFFF"));
         autoSecondList=(ListView)findViewById(R.id.listView_Auto);
         autoSecondList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         Intent intent2 = getIntent();
         name = intent2.getStringExtra("theListName");
         i = intent2.getIntExtra("num",0);
+        if (i==1){
+            shoppingList.clear();
+
+            shoppingList = getArrayVal(getApplicationContext(),dbSave, name);
+            Collections.sort(shoppingList);
+            adapter = new ArrayAdapter(this, R.layout.rowlayout,R.id.txt_lan, shoppingList);
+            autoSecondList.setAdapter(adapter);
+            storeArrayVal(shoppingList, getApplicationContext(), db, key);
+
+        }
         if(i==0) {
             shoppingList=getArrayVal(getApplicationContext(),db,key);
            shoppingList.addAll((ArrayList<String>) getIntent().getSerializableExtra("shopList"));
@@ -64,19 +76,11 @@ public class Auto_Second extends AppCompatActivity {
            adapter = new ArrayAdapter(this, R.layout.rowlayout,R.id.txt_lan, shoppingList);
            autoSecondList.setAdapter(adapter);
             storeArrayVal(shoppingList, getApplicationContext(), db, key);
-        }else if (i==1){
-
-            shoppingList = getArrayVal(getApplicationContext(),dbSave, name);
-             shoppingList.add(name);
-
-            adapter = new ArrayAdapter(this, R.layout.rowlayout,R.id.txt_lan, shoppingList);
-            autoSecondList.setAdapter(adapter);
-
         }
 
         autoSecondList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView parent, View view, final int position, long id) {
-
+                TextView x = (TextView) view;
                 selectedItem = ((TextView) view).getText().toString();
                 if (shoppingListCheck.contains(selectedItem)) {
                     shoppingListCheck.remove(selectedItem);
@@ -84,22 +88,33 @@ public class Auto_Second extends AppCompatActivity {
                 } else
                     shoppingListCheck.add(selectedItem);
 
+                x.setPaintFlags(x.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+
+
             }
 
         });
 
+        autoSecondList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                for ( int j=autoSecondList.getCount()-1;j>= 0; j--) {
+                    autoSecondList.setItemChecked(j, true);
+                   shoppingListCheck.add("nothing");
+
+                }
+
+                return true;
+            }
+        });
+
     }
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_auto_second, menu);
+       getMenuInflater().inflate(R.menu.menu_auto_second, menu);
         return true;
     }
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
 
         if (id == R.id.action_add){
            Intent intent = new Intent();
@@ -118,7 +133,7 @@ public class Auto_Second extends AppCompatActivity {
                     @Override
 
                     public void onClick(DialogInterface dialog, int which) {
-                        SparseBooleanArray checked = autoSecondList.getCheckedItemPositions();
+                     checked = autoSecondList.getCheckedItemPositions();
                         for (int i = autoSecondList.getCount() - 1; i >= 0; i--) {
 
                             if (checked.get(i) == true) {
@@ -199,5 +214,13 @@ public class Auto_Second extends AppCompatActivity {
         Set<String> tempSet = new HashSet<String>();
         tempSet = WordSearchGetPrefs.getStringSet(key, tempSet);
         return new ArrayList<String>(tempSet);
+    }
+    @Override
+    public void onBackPressed()
+    {
+        Intent intent = new Intent();
+        intent.setClass(Auto_Second.this,MainActivity.class);
+        startActivity(intent);
+        super.onBackPressed();
     }
 }
