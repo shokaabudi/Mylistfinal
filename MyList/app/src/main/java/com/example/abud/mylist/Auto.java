@@ -164,6 +164,7 @@ public class Auto extends AppCompatActivity {
             public void onClick(View view) {
                 itemsList.add(preferredCase(newItem));
                  storeArrayVal(itemsList,getApplicationContext(),db,key);
+                shoppingListCheck.add(preferredCase(newItem));
                 Toast.makeText(getApplicationContext(), preferredCase(newItem)+" Is Added", Toast.LENGTH_SHORT).show();
             }
         });

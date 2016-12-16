@@ -50,6 +50,7 @@ public class Saved extends AppCompatActivity {
         savedListsNames.addAll(manual.getArrayVal(getApplicationContext(), dbSaveAuto, savedListsKeyAuto));
         savedListsNamesManual.addAll(manual.getArrayVal(getApplicationContext(), dbSave, savedListsKey));
 
+
         Collections.sort(savedListsNames);
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, savedListsNames);
         savedItemsList.setAdapter(adapter);

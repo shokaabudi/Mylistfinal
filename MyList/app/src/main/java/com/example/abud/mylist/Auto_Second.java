@@ -12,11 +12,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.SparseBooleanArray;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -43,6 +46,7 @@ public class Auto_Second extends AppCompatActivity {
     String savedListName;
     int i =0;
     String name;
+    TextView x;
     AlertDialog.Builder builder;
 
 
@@ -73,25 +77,34 @@ public class Auto_Second extends AppCompatActivity {
             shoppingList=getArrayVal(getApplicationContext(),db,key);
            shoppingList.addAll((ArrayList<String>) getIntent().getSerializableExtra("shopList"));
            Collections.sort(shoppingList);
-           adapter = new ArrayAdapter(this, R.layout.rowlayout,R.id.txt_lan, shoppingList);
+            adapter = new ArrayAdapter(this, R.layout.rowlayout,R.id.txt_lan, shoppingList);
            autoSecondList.setAdapter(adapter);
             storeArrayVal(shoppingList, getApplicationContext(), db, key);
+
         }
 
         autoSecondList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView parent, View view, final int position, long id) {
-                TextView x = (TextView) view;
+       x = (TextView) view;
+
                 selectedItem = ((TextView) view).getText().toString();
                 if (shoppingListCheck.contains(selectedItem)) {
                     shoppingListCheck.remove(selectedItem);
+                }
 
-                } else
+                else
                     shoppingListCheck.add(selectedItem);
-
+                if (autoSecondList.isItemChecked(position)){
                 x.setPaintFlags(x.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                    adapter.notifyDataSetChanged();
 
 
-            }
+                }
+                else
+                x.setPaintFlags(0);
+                adapter.notifyDataSetChanged();
+               }
+
 
         });
 
@@ -100,7 +113,7 @@ public class Auto_Second extends AppCompatActivity {
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
                 for ( int j=autoSecondList.getCount()-1;j>= 0; j--) {
                     autoSecondList.setItemChecked(j, true);
-                   shoppingListCheck.add("nothing");
+                    shoppingListCheck.add("nothing");
 
                 }
 
@@ -119,6 +132,7 @@ public class Auto_Second extends AppCompatActivity {
         if (id == R.id.action_add){
            Intent intent = new Intent();
             intent.setClass(Auto_Second.this,Auto.class);
+            this.finish();
             startActivity(intent);
             return  true;
         }
@@ -138,10 +152,13 @@ public class Auto_Second extends AppCompatActivity {
 
                             if (checked.get(i) == true) {
                                 adapter.remove(shoppingList.get(i));
+
+
                             }
                         }
                         storeArrayVal(shoppingList, getApplicationContext(), db, key);
                         checked.clear();
+                        x.setPaintFlags(0);
                         adapter.notifyDataSetChanged();
                         shoppingListCheck.clear();
 
@@ -220,7 +237,9 @@ public class Auto_Second extends AppCompatActivity {
     {
         Intent intent = new Intent();
         intent.setClass(Auto_Second.this,MainActivity.class);
+        this.finish();
         startActivity(intent);
         super.onBackPressed();
     }
+
 }

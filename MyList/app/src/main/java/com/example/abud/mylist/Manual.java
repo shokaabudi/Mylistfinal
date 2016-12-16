@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -47,6 +48,7 @@ public class Manual extends AppCompatActivity {
     String activityArrayValues = "dbArrayValues";//file name
     int i =0;
     String name;
+    TextView x;
     ArrayList<String> shoppingListTemp = null;
 
 
@@ -80,13 +82,22 @@ public class Manual extends AppCompatActivity {
 
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView parent, View view, final int position, long id) {
-
+                 x = (TextView) view;
                 selectedItem = ((TextView) view).getText().toString();
                 if (shoppingListCheck.contains(selectedItem)) {
                     shoppingListCheck.remove(selectedItem);
 
                 } else
                     shoppingListCheck.add(selectedItem);
+                if (lv.isItemChecked(position)){
+                    x.setPaintFlags(x.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                    adapter.notifyDataSetChanged();
+
+                }
+                else
+                    x.setPaintFlags(0);
+                adapter.notifyDataSetChanged();
+
 
             }
 
@@ -147,6 +158,7 @@ public class Manual extends AppCompatActivity {
 
                             if (checked.get(i) == true) {
                                 adapter.remove(shoppingList.get(i));
+                                x.setPaintFlags(0);
                             }
                         }
                         storeArrayVal(shoppingList, getApplicationContext(), activityArrayValues, activityKey);
