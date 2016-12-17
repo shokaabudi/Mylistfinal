@@ -7,6 +7,18 @@
     <string name="action_save">save items</string>
     <string name="title_activity_manual">Manual</string>
     <string name="Auto">Auto List</string>
+    <string-array name="List">
+        <item>Apple</item> <item>Bacon</item> <item>Banana</item> <item>Meat</item>  <item>Chicken</item> <item>Coffee</item> <item>Tea</item> <item>Lemon</item>
+        <item>Tomato</item> <item>Fish</item>  <item>Alcohol</item> <item>Apple cider</item>  <item>Beer</item> <item>Cigarettes</item> <item>Baby food</item> <item>Baby milk</item>
+        <item>Dipers</item> <item>Brownie</item> <item>Donut</item> <item>Apricots</item>  <item>Aubergine</item> <item>Avocados</item> <item>Basil</item> <item>Blackberries</item>
+        <item>Broccoli</item> <item>Carrots</item> <item>Cashews</item> <item>Champignons</item>  <item>Garlic</item> <item>Grapes</item> <item>greenpepper</item> <item>Kiwi</item>
+        <item>Orange</item> <item>Mango</item> <item>Peaches</item> <item>Pineapple</item>  <item>Potatos</item> <item>Pumpkin</item> <item>spinach</item> <item>Watermelon</item>
+        <item>Onion</item> <item>Milk</item> <item>Butter</item> <item>Cheese</item>  <item>Eggs</item> <item>Yogurt</item> <item>Burger</item> <item>Fries</item>
+        <item>Pizza</item> <item>Ice cream</item> <item>Pasta</item> <item>Lasagne</item>  <item>Chicken nugets</item> <item>Rice</item> <item>Brown rice</item> <item>Flour</item>
+        <item>Couscous</item> <item>Groats</item> <item>Muesli</item> <item>Oatmeal</item>  <item>Sugar</item> <item>Coca cola</item> <item> Juice</item> <item>Soda water</item>
+        <item>Shirt</item> <item>Shoes</item> <item>Jacket</item> <item>Jeans</item>  <item>Blouse</item> <item>After shave</item> <item>Soap</item> <item>Shampoo</item>
+        <item>Honey</item> <item>Ketchup</item> <item>Mustard</item> <item>Soup</item>  <item>Nutella</item> <item>Syrup</item> <item>Vinegar</item> <item>Bags</item>
+    </string-array>
 
 
 </resources>

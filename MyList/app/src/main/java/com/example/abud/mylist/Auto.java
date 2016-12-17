@@ -45,13 +45,9 @@ public class Auto extends AppCompatActivity {
     String item;
     ArrayList<String> shoppingListCheck = new ArrayList<>();
     ArrayList<String> shoppingList = new ArrayList<>();
-
-
-
-    String[] items = {"Apple","Bacon","Meat"};
-    List<String> myItemList=Arrays.asList(items);
-   ArrayList<String> itemsList = new ArrayList<String>();
-
+    String[] items;
+    List<String> myItemList;
+    ArrayList<String> itemsList;//
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +60,9 @@ public class Auto extends AppCompatActivity {
         autoList = (ListView)findViewById(R.id.item_view);
         autoList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         floatButton = (ImageButton)findViewById(R.id.imageButton);
+        items=getResources().getStringArray(R.array.List);
+      myItemList=Arrays.asList(items);
+      itemsList = new ArrayList<String>();
         itemsList = getArrayVal(getApplicationContext(),db,key);
         if(itemsList.isEmpty()){
           itemsList.addAll(myItemList);

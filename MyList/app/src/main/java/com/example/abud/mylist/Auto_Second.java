@@ -8,6 +8,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.net.Uri;
+import android.os.Parcelable;
+import android.preference.Preference;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -20,6 +24,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.CheckedTextView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -32,19 +37,20 @@ import java.util.Set;
 
 public class Auto_Second extends AppCompatActivity {
     ListView autoSecondList;
+    CheckedTextView checkBox;
     ArrayList<String> shoppingList = new ArrayList<>();
     ArrayList<String> shoppingListCheck = new ArrayList<>();
     ArrayList<String> saveList = null;
     ArrayList<String> mySavedList = new ArrayList<>();
     ArrayAdapter<String> adapter = null;
     SparseBooleanArray checked;
-    String db="ShopingList";
-    String key="Values";
-    String dbSave="SaveAuto";
-    String savedListsKey="SaveAutoKey";
+    String db = "ShopingList";
+    String key = "Values";
+    String dbSave = "SaveAuto";
+    String savedListsKey = "SaveAutoKey";
     String selectedItem;
     String savedListName;
-    int i =0;
+    int i = 0;
     String name;
     TextView x;
     AlertDialog.Builder builder;
@@ -58,52 +64,50 @@ public class Auto_Second extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Auto List");
         toolbar.setTitleTextColor(Color.parseColor("#FFFFFF"));
-        autoSecondList=(ListView)findViewById(R.id.listView_Auto);
+        autoSecondList = (ListView) findViewById(R.id.listView_Auto);
         autoSecondList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         Intent intent2 = getIntent();
         name = intent2.getStringExtra("theListName");
-        i = intent2.getIntExtra("num",0);
-        if (i==1){
+        i = intent2.getIntExtra("num", 0);
+        if (i == 1) {
             shoppingList.clear();
 
-            shoppingList = getArrayVal(getApplicationContext(),dbSave, name);
+            shoppingList = getArrayVal(getApplicationContext(), dbSave, name);
             Collections.sort(shoppingList);
-            adapter = new ArrayAdapter(this, R.layout.rowlayout,R.id.txt_lan, shoppingList);
+            adapter = new ArrayAdapter(this, R.layout.rowlayout, R.id.txt_lan, shoppingList);
             autoSecondList.setAdapter(adapter);
             storeArrayVal(shoppingList, getApplicationContext(), db, key);
 
         }
-        if(i==0) {
-            shoppingList=getArrayVal(getApplicationContext(),db,key);
-           shoppingList.addAll((ArrayList<String>) getIntent().getSerializableExtra("shopList"));
-           Collections.sort(shoppingList);
-            adapter = new ArrayAdapter(this, R.layout.rowlayout,R.id.txt_lan, shoppingList);
-           autoSecondList.setAdapter(adapter);
+        if (i == 0) {
+            shoppingList = getArrayVal(getApplicationContext(), db, key);
+            shoppingList.addAll((ArrayList<String>) getIntent().getSerializableExtra("shopList"));
+            Collections.sort(shoppingList);
+            adapter = new ArrayAdapter(this, R.layout.rowlayout, R.id.txt_lan, shoppingList);
+            autoSecondList.setAdapter(adapter);
             storeArrayVal(shoppingList, getApplicationContext(), db, key);
 
         }
 
         autoSecondList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView parent, View view, final int position, long id) {
-       x = (TextView) view;
+                x = (TextView) view;
 
                 selectedItem = ((TextView) view).getText().toString();
                 if (shoppingListCheck.contains(selectedItem)) {
                     shoppingListCheck.remove(selectedItem);
-                }
-
-                else
+                } else
                     shoppingListCheck.add(selectedItem);
-                if (autoSecondList.isItemChecked(position)){
-                x.setPaintFlags(x.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                if (autoSecondList.isItemChecked(position)) {
+
+                    x.setPaintFlags(x.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                     adapter.notifyDataSetChanged();
 
 
-                }
-                else
-                x.setPaintFlags(0);
+                } else
+                    x.setPaintFlags(0);
                 adapter.notifyDataSetChanged();
-               }
+            }
 
 
         });
@@ -111,30 +115,34 @@ public class Auto_Second extends AppCompatActivity {
         autoSecondList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                for ( int j=autoSecondList.getCount()-1;j>= 0; j--) {
+                for (int j = autoSecondList.getCount() - 1; j >= 0; j--) {
                     autoSecondList.setItemChecked(j, true);
                     shoppingListCheck.add("nothing");
 
                 }
 
+
                 return true;
             }
         });
 
+
     }
+
     public boolean onCreateOptionsMenu(Menu menu) {
-       getMenuInflater().inflate(R.menu.menu_auto_second, menu);
+        getMenuInflater().inflate(R.menu.menu_auto_second, menu);
         return true;
     }
+
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.action_add){
-           Intent intent = new Intent();
-            intent.setClass(Auto_Second.this,Auto.class);
+        if (id == R.id.action_add) {
+            Intent intent = new Intent();
+            intent.setClass(Auto_Second.this, Auto.class);
             this.finish();
             startActivity(intent);
-            return  true;
+            return true;
         }
         if (id == R.id.action_clear) {
             if (!shoppingListCheck.isEmpty()) {
@@ -147,7 +155,7 @@ public class Auto_Second extends AppCompatActivity {
                     @Override
 
                     public void onClick(DialogInterface dialog, int which) {
-                     checked = autoSecondList.getCheckedItemPositions();
+                        checked = autoSecondList.getCheckedItemPositions();
                         for (int i = autoSecondList.getCount() - 1; i >= 0; i--) {
 
                             if (checked.get(i) == true) {
@@ -172,12 +180,12 @@ public class Auto_Second extends AppCompatActivity {
                 });
                 builder.show();
                 return true;
-            }else
+            } else
                 Toast.makeText(getApplicationContext(), "Select item/s to delete", Toast.LENGTH_SHORT).show();
 
         }
 
-        if(id==R.id.action_save){
+        if (id == R.id.action_save) {
             builder = new AlertDialog.Builder(this);
             builder.setTitle("Add List Name");
             final EditText input = new EditText(this);
@@ -185,8 +193,8 @@ public class Auto_Second extends AppCompatActivity {
             builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    saveList=getArrayVal(getApplicationContext(), dbSave, savedListsKey);
-                    savedListName=preferredCase(input.getText().toString());
+                    saveList = getArrayVal(getApplicationContext(), dbSave, savedListsKey);
+                    savedListName = preferredCase(input.getText().toString());
                     mySavedList.addAll(shoppingList);
                     saveList.add(savedListName);
                     storeArrayVal(saveList, getApplicationContext(), dbSave, savedListsKey);
@@ -203,43 +211,44 @@ public class Auto_Second extends AppCompatActivity {
                 }
             });
             builder.show();
-            return  true;
+            return true;
         }
 
 
         return super.onOptionsItemSelected(item);
     }
-    public static String preferredCase(String original)
-    {
+
+    public static String preferredCase(String original) {
         if (original.isEmpty())
             return original;
 
         return original.substring(0, 1).toUpperCase() + original.substring(1).toLowerCase();
     }
 
-    public static void storeArrayVal(ArrayList<String> inArrayList, Context context, String db, String key)
-    {
+    public static void storeArrayVal(ArrayList<String> inArrayList, Context context, String db, String key) {
         Set<String> WhatToWrite = new HashSet<String>(inArrayList);
         SharedPreferences WordSearchPutPrefs = context.getSharedPreferences(db, Activity.MODE_PRIVATE);
         SharedPreferences.Editor prefEditor = WordSearchPutPrefs.edit();
         prefEditor.putStringSet(key, WhatToWrite);
         prefEditor.commit();
     }
-    public static ArrayList getArrayVal( Context dan, String db, String key)
-    {
-        SharedPreferences WordSearchGetPrefs = dan.getSharedPreferences(db,Activity.MODE_PRIVATE);
+
+    public static ArrayList getArrayVal(Context dan, String db, String key) {
+        SharedPreferences WordSearchGetPrefs = dan.getSharedPreferences(db, Activity.MODE_PRIVATE);
         Set<String> tempSet = new HashSet<String>();
         tempSet = WordSearchGetPrefs.getStringSet(key, tempSet);
         return new ArrayList<String>(tempSet);
     }
+
     @Override
-    public void onBackPressed()
-    {
+    public void onBackPressed() {
         Intent intent = new Intent();
-        intent.setClass(Auto_Second.this,MainActivity.class);
+        intent.setClass(Auto_Second.this, MainActivity.class);
         this.finish();
         startActivity(intent);
         super.onBackPressed();
     }
+
+
 
 }
