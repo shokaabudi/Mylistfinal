@@ -6,9 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -17,14 +15,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -68,14 +63,14 @@ public class Auto extends AppCompatActivity {
         itemsList = new ArrayList<String>();
         itemsList = getArrayVal(getApplicationContext(),db,key);
 
-        if(itemsList.isEmpty()){
-          itemsList.addAll(myItemList);
+          if(itemsList.isEmpty()){
+           itemsList.addAll(myItemList);
         }
         Collections.sort(itemsList);
         adapter = new ArrayAdapter(this, R.layout.rowlayout,R.id.txt_lan, itemsList);
         autoList.setAdapter(adapter);
         storeArrayVal(shoppingListCheck,getApplicationContext(),"test","test");
-        if (!shoppingListCheck.isEmpty()) {
+           if (!shoppingListCheck.isEmpty()) {
             setCheck(itemsList);
         }
 
@@ -83,15 +78,15 @@ public class Auto extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 selectedItem = ((TextView) view).getText().toString();
-                if (shoppingListCheck.contains(selectedItem)) {
+          if (shoppingListCheck.contains(selectedItem)) {
                     shoppingListCheck.remove(selectedItem);
                     storeArrayVal(shoppingListCheck,getApplicationContext(),"test","test");
                     adapter.notifyDataSetChanged();
 
-                } else
-                    shoppingListCheck.add(selectedItem);
-                storeArrayVal(shoppingListCheck,getApplicationContext(),"test","test");
-                adapter.notifyDataSetChanged();
+        } else
+                   shoppingListCheck.add(selectedItem);
+                   storeArrayVal(shoppingListCheck,getApplicationContext(),"test","test");
+                   adapter.notifyDataSetChanged();
 
 
             }
@@ -153,20 +148,15 @@ public class Auto extends AppCompatActivity {
                     ArrayList<String> Found = new ArrayList<String>();
                     for (String item : itemsList) {
 
-                        if (item.contains(preferredCase(newText)))
+                if (item.contains(preferredCase(newText)))
                             Found.add(item);
                         floatButton.setVisibility(View.VISIBLE);
-                    }
-
-
+                }
                     adapter = new ArrayAdapter(Auto.this, R.layout.rowlayout, R.id.txt_lan, Found);
                     Collections.sort(Found);
                     autoList.setAdapter(adapter);
                     setCheck(Found);
-
-
                 }
-
 
                 else {
                     floatButton.setVisibility(View.INVISIBLE);
@@ -203,7 +193,6 @@ public class Auto extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         int id = item.getItemId();
-
 
         if (id == R.id.done){
             Intent intent = new Intent();
@@ -255,8 +244,7 @@ public class Auto extends AppCompatActivity {
                 String Found = items[l];
                 position[l] = itemsList.indexOf(Found);
                 autoList.setItemChecked(position[l],true);
-                //Toast.makeText(getApplicationContext(),position[l]+" Is Added", Toast.LENGTH_SHORT).show();
-            }
+        }
         }
 
     }

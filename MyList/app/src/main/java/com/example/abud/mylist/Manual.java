@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -21,10 +20,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class Manual extends AppCompatActivity {
@@ -49,8 +46,6 @@ public class Manual extends AppCompatActivity {
     int [] position;
 
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,12 +66,12 @@ public class Manual extends AppCompatActivity {
             Collections.sort(shoppingList);
             adapter = new ArrayAdapter(this, R.layout.rowlayout,R.id.txt_lan, shoppingList);
             lv.setAdapter(adapter);
-
             shoppingListCheck=getArrayVal(getApplicationContext(),"position", "pos");
 
             if (!shoppingListCheck.isEmpty()) {
                 setCheck(shoppingList);
-            }
+
+        }
         } else if (i == 1) {
             shoppingList = getArrayVal(getApplicationContext(),dbSave, name);
             Collections.sort(shoppingList);
@@ -96,32 +91,13 @@ public class Manual extends AppCompatActivity {
                     storeArrayVal(shoppingListCheck, getApplicationContext(), "position", "pos");
                     adapter.notifyDataSetChanged();
 
-                } else
+        } else
                     shoppingListCheck.add(selectedItem);
+
                     storeArrayVal(shoppingListCheck, getApplicationContext(), "position", "pos");
                     adapter.notifyDataSetChanged();
 
-
-              /*  if (lv.isItemChecked(position)){
-                    postionList =getArrayVal(getApplicationContext(),"position", "pos");
-                    pos = String.valueOf(position);
-                    postionList.add(pos);
-                    storeArrayVal(postionList, getApplicationContext(), "position", "pos");
-                    x.setPaintFlags(x.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                    adapter.notifyDataSetChanged();
-
-                }
-                if(!lv.isItemChecked(position)) {
-
-                    x.setPaintFlags(0);
-                    pos = String.valueOf(position);
-                    postionList = getArrayVal(getApplicationContext(), "position", "pos");
-                    postionList.remove(pos);
-                    storeArrayVal(postionList, getApplicationContext(), "position", "pos");
-                    adapter.notifyDataSetChanged();
-                }
-*/
-            }
+        }
 
         });
         lv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -131,23 +107,19 @@ public class Manual extends AppCompatActivity {
                     lv.setItemChecked(j, true);
                     shoppingListCheck.add("nothing");
 
-                }
-
-
+        }
                 return true;
-            }
+        }
         });
 
 
     }
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_manual, menu);
         return true;
     }
     public boolean onOptionsItemSelected(MenuItem item) {
           int id = item.getItemId();
-
 
         if (id == R.id.action_add){
             builder = new AlertDialog.Builder(this);
@@ -177,12 +149,9 @@ public class Manual extends AppCompatActivity {
         if (id == R.id.action_clear) {
             if (!shoppingListCheck.isEmpty() ) {
 
-
-
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle("Clear Selected Items");
                 builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-
 
                     @Override
 
@@ -192,9 +161,9 @@ public class Manual extends AppCompatActivity {
                         for (int i = lv.getCount() - 1; i >= 0; i--) {
 
                             if (checked.get(i) == true) {
+
                                 adapter.remove(shoppingList.get(i));
-                               // x.setPaintFlags(0);
-                            }
+                        }
                         }
                         storeArrayVal(shoppingList, getApplicationContext(), activityArrayValues, activityKey);
 
@@ -234,7 +203,6 @@ public class Manual extends AppCompatActivity {
                     storeArrayVal(saveList, getApplicationContext(), dbSave, savedListsKey);
                     storeArrayVal(mySavedList, getApplicationContext(), dbSave, savedListName);
                     Toast.makeText(getApplicationContext(), savedListName + " Is Saved", Toast.LENGTH_SHORT).show();
-
 
                 }
             });
@@ -309,10 +277,9 @@ public class Manual extends AppCompatActivity {
                 String Found = items[l];
                 position[l] = shoppingList.indexOf(Found);
                 lv.setItemChecked(position[l],true);
-                //Toast.makeText(getApplicationContext(),position[l]+" Is Added", Toast.LENGTH_SHORT).show();
+
             }
         }
 
     }
-
-}
+   }
