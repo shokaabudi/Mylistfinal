@@ -54,6 +54,9 @@ public class Auto_Second extends AppCompatActivity {
     String name;
     TextView x;
     AlertDialog.Builder builder;
+    String  itemPostion[];
+    ArrayList<String> postionList =new ArrayList<>();
+    String pos;
 
 
     @Override
@@ -86,6 +89,15 @@ public class Auto_Second extends AppCompatActivity {
             adapter = new ArrayAdapter(this, R.layout.rowlayout, R.id.txt_lan, shoppingList);
             autoSecondList.setAdapter(adapter);
             storeArrayVal(shoppingList, getApplicationContext(), db, key);
+            postionList=getArrayVal(getApplicationContext(),"positionAutoSecond", "pos");
+            itemPostion = postionList.toArray(new String[postionList.size()]);
+            if(!postionList.isEmpty()) {
+                for(int s=postionList.size() -1; s >= 0; s--) {
+
+                    autoSecondList.setItemChecked(Integer.parseInt(  itemPostion[s]), true);
+                }
+
+            }
 
         }
 
@@ -98,15 +110,26 @@ public class Auto_Second extends AppCompatActivity {
                     shoppingListCheck.remove(selectedItem);
                 } else
                     shoppingListCheck.add(selectedItem);
-                if (autoSecondList.isItemChecked(position)) {
 
+                if (autoSecondList.isItemChecked(position)) {
+                    postionList =getArrayVal(getApplicationContext(),"positionAutoSecond", "pos");
+                    pos = String.valueOf(position);
+                    postionList.add(pos);
+                    storeArrayVal(postionList, getApplicationContext(), "positionAutoSecond", "pos");
                     x.setPaintFlags(x.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                     adapter.notifyDataSetChanged();
 
 
-                } else
+
+                }   if(!autoSecondList.isItemChecked(position)) {
+
                     x.setPaintFlags(0);
-                adapter.notifyDataSetChanged();
+                    pos = String.valueOf(position);
+                    postionList = getArrayVal(getApplicationContext(), "positionAutoSecond", "pos");
+                    postionList.remove(pos);
+                    storeArrayVal(postionList, getApplicationContext(), "positionAutoSecond", "pos");
+                    adapter.notifyDataSetChanged();
+                }
             }
 
 
@@ -138,6 +161,8 @@ public class Auto_Second extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_add) {
+            postionList.clear();
+            storeArrayVal(postionList, getApplicationContext(), "positionAutoSecond", "pos");
             Intent intent = new Intent();
             intent.setClass(Auto_Second.this, Auto.class);
             this.finish();
@@ -166,8 +191,10 @@ public class Auto_Second extends AppCompatActivity {
                         }
                         storeArrayVal(shoppingList, getApplicationContext(), db, key);
                         checked.clear();
-                        x.setPaintFlags(0);
+                       // x.setPaintFlags(0);
                         adapter.notifyDataSetChanged();
+                        postionList.clear();
+                        storeArrayVal(postionList, getApplicationContext(), "positionAutoSecond", "pos");
                         shoppingListCheck.clear();
 
                     }

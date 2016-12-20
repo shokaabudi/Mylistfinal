@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -46,8 +47,9 @@ public class Auto extends AppCompatActivity {
     ArrayList<String> shoppingListCheck = new ArrayList<>();
     ArrayList<String> shoppingList = new ArrayList<>();
     String[] items;
+    int [] position;
     List<String> myItemList;
-    ArrayList<String> itemsList;//
+    ArrayList<String> itemsList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,26 +62,38 @@ public class Auto extends AppCompatActivity {
         autoList = (ListView)findViewById(R.id.item_view);
         autoList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         floatButton = (ImageButton)findViewById(R.id.imageButton);
+        shoppingListCheck=getArrayVal(getApplicationContext(),"test", "test");
         items=getResources().getStringArray(R.array.List);
-      myItemList=Arrays.asList(items);
-      itemsList = new ArrayList<String>();
+        myItemList=Arrays.asList(items);
+        itemsList = new ArrayList<String>();
         itemsList = getArrayVal(getApplicationContext(),db,key);
+
         if(itemsList.isEmpty()){
           itemsList.addAll(myItemList);
         }
         Collections.sort(itemsList);
         adapter = new ArrayAdapter(this, R.layout.rowlayout,R.id.txt_lan, itemsList);
         autoList.setAdapter(adapter);
+        storeArrayVal(shoppingListCheck,getApplicationContext(),"test","test");
+        if (!shoppingListCheck.isEmpty()) {
+            setCheck(itemsList);
+        }
+
         autoList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 selectedItem = ((TextView) view).getText().toString();
                 if (shoppingListCheck.contains(selectedItem)) {
                     shoppingListCheck.remove(selectedItem);
+                    storeArrayVal(shoppingListCheck,getApplicationContext(),"test","test");
+                    adapter.notifyDataSetChanged();
 
                 } else
                     shoppingListCheck.add(selectedItem);
                 storeArrayVal(shoppingListCheck,getApplicationContext(),"test","test");
+                adapter.notifyDataSetChanged();
+
+
             }
         });
         autoList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -122,6 +136,7 @@ public class Auto extends AppCompatActivity {
             adapter = new ArrayAdapter(Auto.this, R.layout.rowlayout,R.id.txt_lan, itemsList);
             Collections.sort(itemsList);
             autoList.setAdapter(adapter);
+            setCheck(itemsList);
         }
     });
 
@@ -134,9 +149,9 @@ public class Auto extends AppCompatActivity {
             @Override
             public boolean onQueryTextChange(String newText) {
                  newItem = newText;
-                if(newText != null && !newText.isEmpty()){
-                List<String> Found = new ArrayList<String>();
-                    for(String item:itemsList) {
+                if(newText != null && !newText.isEmpty()) {
+                    ArrayList<String> Found = new ArrayList<String>();
+                    for (String item : itemsList) {
 
                         if (item.contains(preferredCase(newText)))
                             Found.add(item);
@@ -144,15 +159,22 @@ public class Auto extends AppCompatActivity {
                     }
 
 
-                        adapter = new ArrayAdapter(Auto.this, R.layout.rowlayout, R.id.txt_lan, Found);
+                    adapter = new ArrayAdapter(Auto.this, R.layout.rowlayout, R.id.txt_lan, Found);
                     Collections.sort(Found);
-                        autoList.setAdapter(adapter);
-                    }
+                    autoList.setAdapter(adapter);
+                    setCheck(Found);
+
+
+                }
+
+
                 else {
                     floatButton.setVisibility(View.INVISIBLE);
                     adapter = new ArrayAdapter(Auto.this, R.layout.rowlayout,R.id.txt_lan, itemsList);
                     Collections.sort(itemsList);
                     autoList.setAdapter(adapter);
+                    setCheck(itemsList);
+
                 }
                 return true;
             }
@@ -164,6 +186,7 @@ public class Auto extends AppCompatActivity {
                 itemsList.add(preferredCase(newItem));
                  storeArrayVal(itemsList,getApplicationContext(),db,key);
                 shoppingListCheck.add(preferredCase(newItem));
+                storeArrayVal(shoppingListCheck,getApplicationContext(),"test","test");
                 Toast.makeText(getApplicationContext(), preferredCase(newItem)+" Is Added", Toast.LENGTH_SHORT).show();
             }
         });
@@ -178,9 +201,7 @@ public class Auto extends AppCompatActivity {
         return true;
     }
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+
         int id = item.getItemId();
 
 
@@ -188,11 +209,14 @@ public class Auto extends AppCompatActivity {
             Intent intent = new Intent();
             intent.setClass(Auto.this, Auto_Second.class);
             shoppingList=getArrayVal(getApplicationContext(),"ShopingList","Values");
+            shoppingListCheck=getArrayVal(getApplicationContext(),"test", "test");
             if(shoppingList.contains(selectedItem)){
                 shoppingListCheck.remove(selectedItem);
             }
             intent.putStringArrayListExtra("shopList",shoppingListCheck);
             startActivity(intent);
+            shoppingListCheck.clear();
+             storeArrayVal(shoppingListCheck,getApplicationContext(),"test","test");
             finish();
 
                 }
@@ -220,5 +244,20 @@ public class Auto extends AppCompatActivity {
         Set<String> tempSet = new HashSet<String>();
         tempSet = WordSearchGetPrefs.getStringSet(key, tempSet);
         return new ArrayList<String>(tempSet);
+    }
+
+    public void setCheck(ArrayList<String> My_list){
+        position = new int[shoppingListCheck.size()];
+        items = shoppingListCheck.toArray(new String[shoppingListCheck.size()]);
+
+        for (int l = shoppingListCheck.size()-1; l >= 0; l--) {
+            if (My_list.contains(items[l])) {
+                String Found = items[l];
+                position[l] = itemsList.indexOf(Found);
+                autoList.setItemChecked(position[l],true);
+                //Toast.makeText(getApplicationContext(),position[l]+" Is Added", Toast.LENGTH_SHORT).show();
+            }
+        }
+
     }
 }

@@ -8,8 +8,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Paint;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.SparseBooleanArray;
@@ -18,12 +16,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -37,7 +33,6 @@ public class Manual extends AppCompatActivity {
     ArrayList<String> saveList = null;
     ArrayList<String> mySavedList = new ArrayList<>();
     ArrayAdapter<String> adapter = null;
-    ArrayAdapter<String> adapter2 = null;
     ListView lv = null;
     String selectedItem;
     AlertDialog.Builder builder;
@@ -49,7 +44,11 @@ public class Manual extends AppCompatActivity {
     int i =0;
     String name;
     TextView x;
-    ArrayList<String> shoppingListTemp = null;
+    SparseBooleanArray checked;
+    String[] items;
+    int [] position;
+
+
 
 
     @Override
@@ -59,10 +58,13 @@ public class Manual extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         lv = (ListView) findViewById(R.id.listView);
+
         lv.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+
         Intent intent = getIntent();
         name = intent.getStringExtra("theListName");
         i = intent.getIntExtra("num",0);
+  shoppingListCheck.clear();
 
         if (i == 0) {
             shoppingList = getArrayVal(getApplicationContext(), activityArrayValues, activityKey);
@@ -70,6 +72,11 @@ public class Manual extends AppCompatActivity {
             adapter = new ArrayAdapter(this, R.layout.rowlayout,R.id.txt_lan, shoppingList);
             lv.setAdapter(adapter);
 
+            shoppingListCheck=getArrayVal(getApplicationContext(),"position", "pos");
+
+            if (!shoppingListCheck.isEmpty()) {
+                setCheck(shoppingList);
+            }
         } else if (i == 1) {
             shoppingList = getArrayVal(getApplicationContext(),dbSave, name);
             Collections.sort(shoppingList);
@@ -82,25 +89,53 @@ public class Manual extends AppCompatActivity {
 
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView parent, View view, final int position, long id) {
-                 x = (TextView) view;
+                x = (TextView) view;
                 selectedItem = ((TextView) view).getText().toString();
                 if (shoppingListCheck.contains(selectedItem)) {
                     shoppingListCheck.remove(selectedItem);
+                    storeArrayVal(shoppingListCheck, getApplicationContext(), "position", "pos");
+                    adapter.notifyDataSetChanged();
 
                 } else
                     shoppingListCheck.add(selectedItem);
-                if (lv.isItemChecked(position)){
+                    storeArrayVal(shoppingListCheck, getApplicationContext(), "position", "pos");
+                    adapter.notifyDataSetChanged();
+
+
+              /*  if (lv.isItemChecked(position)){
+                    postionList =getArrayVal(getApplicationContext(),"position", "pos");
+                    pos = String.valueOf(position);
+                    postionList.add(pos);
+                    storeArrayVal(postionList, getApplicationContext(), "position", "pos");
                     x.setPaintFlags(x.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                     adapter.notifyDataSetChanged();
 
                 }
-                else
+                if(!lv.isItemChecked(position)) {
+
                     x.setPaintFlags(0);
-                adapter.notifyDataSetChanged();
-
-
+                    pos = String.valueOf(position);
+                    postionList = getArrayVal(getApplicationContext(), "position", "pos");
+                    postionList.remove(pos);
+                    storeArrayVal(postionList, getApplicationContext(), "position", "pos");
+                    adapter.notifyDataSetChanged();
+                }
+*/
             }
 
+        });
+        lv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                for (int j = lv.getCount() - 1; j >= 0; j--) {
+                    lv.setItemChecked(j, true);
+                    shoppingListCheck.add("nothing");
+
+                }
+
+
+                return true;
+            }
         });
 
 
@@ -111,10 +146,7 @@ public class Manual extends AppCompatActivity {
         return true;
     }
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+          int id = item.getItemId();
 
 
         if (id == R.id.action_add){
@@ -130,6 +162,7 @@ public class Manual extends AppCompatActivity {
                     storeArrayVal(shoppingList, getApplicationContext(), activityArrayValues, activityKey);
                     Toast.makeText(getApplicationContext(), preferredCase(input.getText().toString()) + " Is added", Toast.LENGTH_SHORT).show();
                     lv.setAdapter(adapter);
+                    setCheck(shoppingList);
                 }
             });
             builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -142,7 +175,8 @@ public class Manual extends AppCompatActivity {
             return  true;
         }
         if (id == R.id.action_clear) {
-            if (!shoppingListCheck.isEmpty()) {
+            if (!shoppingListCheck.isEmpty() ) {
+
 
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -153,12 +187,13 @@ public class Manual extends AppCompatActivity {
                     @Override
 
                     public void onClick(DialogInterface dialog, int which) {
-                        SparseBooleanArray checked = lv.getCheckedItemPositions();
+                        checked = lv.getCheckedItemPositions();
+
                         for (int i = lv.getCount() - 1; i >= 0; i--) {
 
                             if (checked.get(i) == true) {
                                 adapter.remove(shoppingList.get(i));
-                                x.setPaintFlags(0);
+                               // x.setPaintFlags(0);
                             }
                         }
                         storeArrayVal(shoppingList, getApplicationContext(), activityArrayValues, activityKey);
@@ -166,6 +201,8 @@ public class Manual extends AppCompatActivity {
                         checked.clear();
                         adapter.notifyDataSetChanged();
                         shoppingListCheck.clear();
+                        storeArrayVal(shoppingListCheck, getApplicationContext(), "position", "pos");
+
 
                     }
                 });
@@ -237,6 +274,7 @@ public class Manual extends AppCompatActivity {
         return new ArrayList<String>(tempSet);
     }
 
+
     public void Add_New() {
 
         builder = new AlertDialog.Builder(this);
@@ -260,6 +298,20 @@ public class Manual extends AppCompatActivity {
             }
         });
         builder.show();
+
+    }
+    public void setCheck(ArrayList<String> My_list){
+        position = new int[shoppingListCheck.size()];
+        items = shoppingListCheck.toArray(new String[shoppingListCheck.size()]);
+
+        for (int l = shoppingListCheck.size()-1; l >= 0; l--) {
+            if (My_list.contains(items[l])) {
+                String Found = items[l];
+                position[l] = shoppingList.indexOf(Found);
+                lv.setItemChecked(position[l],true);
+                //Toast.makeText(getApplicationContext(),position[l]+" Is Added", Toast.LENGTH_SHORT).show();
+            }
+        }
 
     }
 
