@@ -4,10 +4,10 @@
     android:id="@+id/txt_lan"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center_vertical"
     android:checkMark="?android:attr/listChoiceIndicatorMultiple"
+    android:checked="false"
+    android:gravity="center_vertical"
     android:padding="10dp"
-    android:visibility="visible"
     android:textIsSelectable="false"
-    android:checked="false" />
+    android:visibility="visible" />
 

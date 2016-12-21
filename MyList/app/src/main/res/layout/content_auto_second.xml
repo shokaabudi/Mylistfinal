@@ -13,12 +13,11 @@
     tools:showIn="@layout/activity_auto__second">
 
     <ListView
+        android:id="@+id/listView_Auto"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/listView_Auto"
-        android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        />
+        android:layout_alignParentTop="true" />
 
 </RelativeLayout>

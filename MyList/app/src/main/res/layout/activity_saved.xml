@@ -22,10 +22,7 @@
     </android.support.design.widget.AppBarLayout>
 
 
-
-<include layout="@layout/content_saved" />
-
+    <include layout="@layout/content_saved" />
 
 
-
-    </android.support.design.widget.CoordinatorLayout>
+</android.support.design.widget.CoordinatorLayout>

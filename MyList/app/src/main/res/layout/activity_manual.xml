@@ -24,6 +24,4 @@
     <include layout="@layout/content_manual" />
 
 
-
-
 </android.support.design.widget.CoordinatorLayout>

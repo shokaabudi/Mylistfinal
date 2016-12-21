@@ -22,10 +22,7 @@
     </android.support.design.widget.AppBarLayout>
 
 
-
     <include layout="@layout/content_auto_second" />
-
-
 
 
 </android.support.design.widget.CoordinatorLayout>

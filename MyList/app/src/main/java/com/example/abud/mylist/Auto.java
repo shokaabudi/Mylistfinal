@@ -7,8 +7,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,7 +19,9 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -35,42 +37,64 @@ public class Auto extends AppCompatActivity {
     MaterialSearchView searchView;
     ImageButton floatButton;
     String newItem;
-    String db ="AutoArray";
-    String key ="Values";
+    String db = "AutoArray";
+    String key = "Values";
     String selectedItem;
     String item;
     ArrayList<String> shoppingListCheck = new ArrayList<>();
     ArrayList<String> shoppingList = new ArrayList<>();
     String[] items;
-    int [] position;
+    int[] position;
     List<String> myItemList;
     ArrayList<String> itemsList;
+
+    public static String preferredCase(String original) {
+        if (original.isEmpty())
+            return original;
+
+        return original.substring(0, 1).toUpperCase() + original.substring(1).toLowerCase();
+    }
+
+    public static void storeArrayVal(ArrayList<String> inArrayList, Context context, String db, String key) {
+        Set<String> WhatToWrite = new HashSet<String>(inArrayList);
+        SharedPreferences WordSearchPutPrefs = context.getSharedPreferences(db, Activity.MODE_PRIVATE);
+        SharedPreferences.Editor prefEditor = WordSearchPutPrefs.edit();
+        prefEditor.putStringSet(key, WhatToWrite);
+        prefEditor.commit();
+    }
+
+    public static ArrayList getArrayVal(Context dan, String db, String key) {
+        SharedPreferences WordSearchGetPrefs = dan.getSharedPreferences(db, Activity.MODE_PRIVATE);
+        Set<String> tempSet = new HashSet<String>();
+        tempSet = WordSearchGetPrefs.getStringSet(key, tempSet);
+        return new ArrayList<String>(tempSet);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_auto);
-        Toolbar toolbar =(Toolbar)findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Auto");
         toolbar.setTitleTextColor(Color.parseColor("#FFFFFF"));
-        autoList = (ListView)findViewById(R.id.item_view);
+        autoList = (ListView) findViewById(R.id.item_view);
         autoList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-        floatButton = (ImageButton)findViewById(R.id.imageButton);
-        shoppingListCheck=getArrayVal(getApplicationContext(),"test", "test");
-        items=getResources().getStringArray(R.array.List);
-        myItemList=Arrays.asList(items);
+        floatButton = (ImageButton) findViewById(R.id.imageButton);
+        shoppingListCheck = getArrayVal(getApplicationContext(), "test", "test");
+        items = getResources().getStringArray(R.array.List);
+        myItemList = Arrays.asList(items);
         itemsList = new ArrayList<String>();
-        itemsList = getArrayVal(getApplicationContext(),db,key);
+        itemsList = getArrayVal(getApplicationContext(), db, key);
 
-          if(itemsList.isEmpty()){
-           itemsList.addAll(myItemList);
+        if (itemsList.isEmpty()) {
+            itemsList.addAll(myItemList);
         }
         Collections.sort(itemsList);
-        adapter = new ArrayAdapter(this, R.layout.rowlayout,R.id.txt_lan, itemsList);
+        adapter = new ArrayAdapter(this, R.layout.rowlayout, R.id.txt_lan, itemsList);
         autoList.setAdapter(adapter);
-        storeArrayVal(shoppingListCheck,getApplicationContext(),"test","test");
-           if (!shoppingListCheck.isEmpty()) {
+        storeArrayVal(shoppingListCheck, getApplicationContext(), "test", "test");
+        if (!shoppingListCheck.isEmpty()) {
             setCheck(itemsList);
         }
 
@@ -78,15 +102,15 @@ public class Auto extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 selectedItem = ((TextView) view).getText().toString();
-          if (shoppingListCheck.contains(selectedItem)) {
+                if (shoppingListCheck.contains(selectedItem)) {
                     shoppingListCheck.remove(selectedItem);
-                    storeArrayVal(shoppingListCheck,getApplicationContext(),"test","test");
+                    storeArrayVal(shoppingListCheck, getApplicationContext(), "test", "test");
                     adapter.notifyDataSetChanged();
 
-        } else
-                   shoppingListCheck.add(selectedItem);
-                   storeArrayVal(shoppingListCheck,getApplicationContext(),"test","test");
-                   adapter.notifyDataSetChanged();
+                } else
+                    shoppingListCheck.add(selectedItem);
+                storeArrayVal(shoppingListCheck, getApplicationContext(), "test", "test");
+                adapter.notifyDataSetChanged();
 
 
             }
@@ -95,7 +119,7 @@ public class Auto extends AppCompatActivity {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
 
-                item=((TextView) view).getText().toString();
+                item = ((TextView) view).getText().toString();
                 AlertDialog.Builder builder = new AlertDialog.Builder(Auto.this);
                 builder.setTitle("Clear Selected Item");
                 builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
@@ -103,7 +127,7 @@ public class Auto extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
 
                         adapter.remove(item);
-                        storeArrayVal(itemsList,getApplicationContext(),db,key);
+                        storeArrayVal(itemsList, getApplicationContext(), db, key);
                         adapter.notifyDataSetChanged();
                     }
                 });
@@ -119,21 +143,22 @@ public class Auto extends AppCompatActivity {
             }
         });
 
-        searchView = (MaterialSearchView)findViewById(R.id.search_view);
-        searchView.setOnSearchViewListener(new MaterialSearchView.SearchViewListener(){
-        @Override
-        public void onSearchViewShown(){
+        searchView = (MaterialSearchView) findViewById(R.id.search_view);
+        searchView.setOnSearchViewListener(new MaterialSearchView.SearchViewListener() {
+            @Override
+            public void onSearchViewShown() {
 
-        }
-        @Override
-        public void onSearchViewClosed(){
+            }
+
+            @Override
+            public void onSearchViewClosed() {
 // if Search Closed, autoView return default
-            adapter = new ArrayAdapter(Auto.this, R.layout.rowlayout,R.id.txt_lan, itemsList);
-            Collections.sort(itemsList);
-            autoList.setAdapter(adapter);
-            setCheck(itemsList);
-        }
-    });
+                adapter = new ArrayAdapter(Auto.this, R.layout.rowlayout, R.id.txt_lan, itemsList);
+                Collections.sort(itemsList);
+                autoList.setAdapter(adapter);
+                setCheck(itemsList);
+            }
+        });
 
         searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
             @Override
@@ -143,24 +168,22 @@ public class Auto extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                 newItem = newText;
-                if(newText != null && !newText.isEmpty()) {
+                newItem = newText;
+                if (newText != null && !newText.isEmpty()) {
                     ArrayList<String> Found = new ArrayList<String>();
                     for (String item : itemsList) {
 
-                if (item.contains(preferredCase(newText)))
+                        if (item.contains(preferredCase(newText)))
                             Found.add(item);
                         floatButton.setVisibility(View.VISIBLE);
-                }
+                    }
                     adapter = new ArrayAdapter(Auto.this, R.layout.rowlayout, R.id.txt_lan, Found);
                     Collections.sort(Found);
                     autoList.setAdapter(adapter);
                     setCheck(Found);
-                }
-
-                else {
+                } else {
                     floatButton.setVisibility(View.INVISIBLE);
-                    adapter = new ArrayAdapter(Auto.this, R.layout.rowlayout,R.id.txt_lan, itemsList);
+                    adapter = new ArrayAdapter(Auto.this, R.layout.rowlayout, R.id.txt_lan, itemsList);
                     Collections.sort(itemsList);
                     autoList.setAdapter(adapter);
                     setCheck(itemsList);
@@ -174,14 +197,15 @@ public class Auto extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 itemsList.add(preferredCase(newItem));
-                 storeArrayVal(itemsList,getApplicationContext(),db,key);
+                storeArrayVal(itemsList, getApplicationContext(), db, key);
                 shoppingListCheck.add(preferredCase(newItem));
-                storeArrayVal(shoppingListCheck,getApplicationContext(),"test","test");
-                Toast.makeText(getApplicationContext(), preferredCase(newItem)+" Is Added", Toast.LENGTH_SHORT).show();
+                storeArrayVal(shoppingListCheck, getApplicationContext(), "test", "test");
+                Toast.makeText(getApplicationContext(), preferredCase(newItem) + " Is Added", Toast.LENGTH_SHORT).show();
             }
         });
 
     }
+
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_auto, menu);
@@ -190,61 +214,40 @@ public class Auto extends AppCompatActivity {
 
         return true;
     }
+
     public boolean onOptionsItemSelected(MenuItem item) {
 
         int id = item.getItemId();
 
-        if (id == R.id.done){
+        if (id == R.id.done) {
             Intent intent = new Intent();
             intent.setClass(Auto.this, Auto_Second.class);
-            shoppingList=getArrayVal(getApplicationContext(),"ShopingList","Values");
-            shoppingListCheck=getArrayVal(getApplicationContext(),"test", "test");
-            if(shoppingList.contains(selectedItem)){
+            shoppingList = getArrayVal(getApplicationContext(), "ShopingList", "Values");
+            shoppingListCheck = getArrayVal(getApplicationContext(), "test", "test");
+            if (shoppingList.contains(selectedItem)) {
                 shoppingListCheck.remove(selectedItem);
             }
-            intent.putStringArrayListExtra("shopList",shoppingListCheck);
+            intent.putStringArrayListExtra("shopList", shoppingListCheck);
             startActivity(intent);
             shoppingListCheck.clear();
-             storeArrayVal(shoppingListCheck,getApplicationContext(),"test","test");
+            storeArrayVal(shoppingListCheck, getApplicationContext(), "test", "test");
             finish();
 
-                }
-
-            return  true;
         }
-    public static String preferredCase(String original)
-    {
-        if (original.isEmpty())
-            return original;
 
-        return original.substring(0, 1).toUpperCase() + original.substring(1).toLowerCase();
-    }
-    public static void storeArrayVal(ArrayList<String> inArrayList, Context context, String db, String key)
-    {
-        Set<String> WhatToWrite = new HashSet<String>(inArrayList);
-        SharedPreferences WordSearchPutPrefs = context.getSharedPreferences(db, Activity.MODE_PRIVATE);
-        SharedPreferences.Editor prefEditor = WordSearchPutPrefs.edit();
-        prefEditor.putStringSet(key, WhatToWrite);
-        prefEditor.commit();
-    }
-    public static ArrayList getArrayVal( Context dan, String db, String key)
-    {
-        SharedPreferences WordSearchGetPrefs = dan.getSharedPreferences(db,Activity.MODE_PRIVATE);
-        Set<String> tempSet = new HashSet<String>();
-        tempSet = WordSearchGetPrefs.getStringSet(key, tempSet);
-        return new ArrayList<String>(tempSet);
+        return true;
     }
 
-    public void setCheck(ArrayList<String> My_list){
+    public void setCheck(ArrayList<String> My_list) {
         position = new int[shoppingListCheck.size()];
         items = shoppingListCheck.toArray(new String[shoppingListCheck.size()]);
 
-        for (int l = shoppingListCheck.size()-1; l >= 0; l--) {
+        for (int l = shoppingListCheck.size() - 1; l >= 0; l--) {
             if (My_list.contains(items[l])) {
                 String Found = items[l];
                 position[l] = itemsList.indexOf(Found);
-                autoList.setItemChecked(position[l],true);
-        }
+                autoList.setItemChecked(position[l], true);
+            }
         }
 
     }

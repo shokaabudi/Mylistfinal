@@ -5,14 +5,15 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -23,9 +24,9 @@ public class Saved extends AppCompatActivity {
     ArrayList<String> savedListsNamesManual = new ArrayList<>();
     ArrayAdapter<String> adapter = null;
     String savedListsKey = "ListName";//key name or parameter
-    String dbSave ="SavedListsNames";//file name
+    String dbSave = "SavedListsNames";//file name
     String savedListsKeyAuto = "SaveAutoKey";//key name or parameter
-    String dbSaveAuto ="SaveAuto";//file name
+    String dbSaveAuto = "SaveAuto";//file name
     Manual manual = new Manual();
     String selectedListName;
 
@@ -33,7 +34,7 @@ public class Saved extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_saved);
-        savedItemsList=(ListView)findViewById(R.id.listView_save);
+        savedItemsList = (ListView) findViewById(R.id.listView_save);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Saved Lists");
@@ -55,7 +56,7 @@ public class Saved extends AppCompatActivity {
                 String name = ((TextView) view).getText().toString();
                 Intent intent = new Intent();
                 Intent Auto = new Intent();
-                if(savedListsNamesManual.contains(name)) {
+                if (savedListsNamesManual.contains(name)) {
 
                     intent.setClass(Saved.this, Manual.class);
                     intent.putExtra("theListName", name);
@@ -63,7 +64,7 @@ public class Saved extends AppCompatActivity {
                     startActivity(intent);
                     finish();
 
-                } else{
+                } else {
 
                     Auto.setClass(Saved.this, Auto_Second.class);
                     Auto.putExtra("theListName", name);
@@ -76,11 +77,11 @@ public class Saved extends AppCompatActivity {
             }
         });
 
-       savedItemsList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        savedItemsList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
 
-                selectedListName=((TextView) view).getText().toString();
+                selectedListName = ((TextView) view).getText().toString();
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(Saved.this);
                 builder.setTitle("Clear Selected Item");
@@ -107,4 +108,4 @@ public class Saved extends AppCompatActivity {
             }
         });
     }
-    }
+}

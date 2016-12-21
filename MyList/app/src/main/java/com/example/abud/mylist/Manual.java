@@ -19,6 +19,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -35,16 +36,37 @@ public class Manual extends AppCompatActivity {
     AlertDialog.Builder builder;
     String savedListName;
     String savedListsKey = "ListName";//key name or parameter
-    String dbSave ="SavedListsNames";//file name
-    String activityKey="myArray";//key name or parameter
+    String dbSave = "SavedListsNames";//file name
+    String activityKey = "myArray";//key name or parameter
     String activityArrayValues = "dbArrayValues";//file name
-    int i =0;
+    int i = 0;
     String name;
     TextView x;
     SparseBooleanArray checked;
     String[] items;
-    int [] position;
+    int[] position;
 
+    public static String preferredCase(String original) {
+        if (original.isEmpty())
+            return original;
+
+        return original.substring(0, 1).toUpperCase() + original.substring(1).toLowerCase();
+    }
+
+    public static void storeArrayVal(ArrayList<String> inArrayList, Context context, String db, String key) {
+        Set<String> WhatToWrite = new HashSet<String>(inArrayList);
+        SharedPreferences WordSearchPutPrefs = context.getSharedPreferences(db, Activity.MODE_PRIVATE);
+        SharedPreferences.Editor prefEditor = WordSearchPutPrefs.edit();
+        prefEditor.putStringSet(key, WhatToWrite);
+        prefEditor.commit();
+    }
+
+    public static ArrayList getArrayVal(Context dan, String db, String key) {
+        SharedPreferences WordSearchGetPrefs = dan.getSharedPreferences(db, Activity.MODE_PRIVATE);
+        Set<String> tempSet = new HashSet<String>();
+        tempSet = WordSearchGetPrefs.getStringSet(key, tempSet);
+        return new ArrayList<String>(tempSet);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,27 +80,28 @@ public class Manual extends AppCompatActivity {
 
         Intent intent = getIntent();
         name = intent.getStringExtra("theListName");
-        i = intent.getIntExtra("num",0);
-  shoppingListCheck.clear();
+        i = intent.getIntExtra("num", 0);
+        shoppingListCheck.clear();
 
         if (i == 0) {
             shoppingList = getArrayVal(getApplicationContext(), activityArrayValues, activityKey);
             Collections.sort(shoppingList);
-            adapter = new ArrayAdapter(this, R.layout.rowlayout,R.id.txt_lan, shoppingList);
+            adapter = new ArrayAdapter(this, R.layout.rowlayout, R.id.txt_lan, shoppingList);
             lv.setAdapter(adapter);
-            shoppingListCheck=getArrayVal(getApplicationContext(),"position", "pos");
+            shoppingListCheck = getArrayVal(getApplicationContext(), "position", "pos");
 
             if (!shoppingListCheck.isEmpty()) {
                 setCheck(shoppingList);
 
-        }
+            }
         } else if (i == 1) {
-            shoppingList = getArrayVal(getApplicationContext(),dbSave, name);
+            shoppingList = getArrayVal(getApplicationContext(), dbSave, name);
             Collections.sort(shoppingList);
-            adapter = new ArrayAdapter(this, R.layout.rowlayout,R.id.txt_lan, shoppingList);
+            adapter = new ArrayAdapter(this, R.layout.rowlayout, R.id.txt_lan, shoppingList);
             lv.setAdapter(adapter);
 
-        } if (shoppingList.isEmpty()) {
+        }
+        if (shoppingList.isEmpty()) {
             Add_New();
         }
 
@@ -91,13 +114,13 @@ public class Manual extends AppCompatActivity {
                     storeArrayVal(shoppingListCheck, getApplicationContext(), "position", "pos");
                     adapter.notifyDataSetChanged();
 
-        } else
+                } else
                     shoppingListCheck.add(selectedItem);
 
-                    storeArrayVal(shoppingListCheck, getApplicationContext(), "position", "pos");
-                    adapter.notifyDataSetChanged();
+                storeArrayVal(shoppingListCheck, getApplicationContext(), "position", "pos");
+                adapter.notifyDataSetChanged();
 
-        }
+            }
 
         });
         lv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -107,21 +130,23 @@ public class Manual extends AppCompatActivity {
                     lv.setItemChecked(j, true);
                     shoppingListCheck.add("nothing");
 
-        }
+                }
                 return true;
-        }
+            }
         });
 
 
     }
+
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_manual, menu);
         return true;
     }
-    public boolean onOptionsItemSelected(MenuItem item) {
-          int id = item.getItemId();
 
-        if (id == R.id.action_add){
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_add) {
             builder = new AlertDialog.Builder(this);
             builder.setTitle("Add Item");
             final EditText input = new EditText(this);
@@ -144,10 +169,10 @@ public class Manual extends AppCompatActivity {
                 }
             });
             builder.show();
-            return  true;
+            return true;
         }
         if (id == R.id.action_clear) {
-            if (!shoppingListCheck.isEmpty() ) {
+            if (!shoppingListCheck.isEmpty()) {
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle("Clear Selected Items");
@@ -163,7 +188,7 @@ public class Manual extends AppCompatActivity {
                             if (checked.get(i) == true) {
 
                                 adapter.remove(shoppingList.get(i));
-                        }
+                            }
                         }
                         storeArrayVal(shoppingList, getApplicationContext(), activityArrayValues, activityKey);
 
@@ -183,12 +208,12 @@ public class Manual extends AppCompatActivity {
                 });
                 builder.show();
                 return true;
-            }else
+            } else
                 Toast.makeText(getApplicationContext(), "Select item/s to delete", Toast.LENGTH_SHORT).show();
 
         }
 
-        if(id==R.id.action_save){
+        if (id == R.id.action_save) {
             builder = new AlertDialog.Builder(this);
             builder.setTitle("Add List Name");
             final EditText input = new EditText(this);
@@ -196,8 +221,8 @@ public class Manual extends AppCompatActivity {
             builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    saveList=getArrayVal(getApplicationContext(), dbSave, savedListsKey);
-                    savedListName=preferredCase(input.getText().toString());
+                    saveList = getArrayVal(getApplicationContext(), dbSave, savedListsKey);
+                    savedListName = preferredCase(input.getText().toString());
                     mySavedList.addAll(shoppingList);
                     saveList.add(savedListName);
                     storeArrayVal(saveList, getApplicationContext(), dbSave, savedListsKey);
@@ -213,35 +238,12 @@ public class Manual extends AppCompatActivity {
                 }
             });
             builder.show();
-            return  true;
+            return true;
         }
 
 
         return super.onOptionsItemSelected(item);
     }
-    public static String preferredCase(String original)
-    {
-        if (original.isEmpty())
-            return original;
-
-        return original.substring(0, 1).toUpperCase() + original.substring(1).toLowerCase();
-    }
-    public static void storeArrayVal( ArrayList<String> inArrayList, Context context, String db, String key)
-    {
-        Set<String> WhatToWrite = new HashSet<String>(inArrayList);
-        SharedPreferences WordSearchPutPrefs = context.getSharedPreferences(db, Activity.MODE_PRIVATE);
-        SharedPreferences.Editor prefEditor = WordSearchPutPrefs.edit();
-        prefEditor.putStringSet(key, WhatToWrite);
-        prefEditor.commit();
-    }
-    public static ArrayList getArrayVal( Context dan, String db, String key)
-    {
-        SharedPreferences WordSearchGetPrefs = dan.getSharedPreferences(db,Activity.MODE_PRIVATE);
-        Set<String> tempSet = new HashSet<String>();
-        tempSet = WordSearchGetPrefs.getStringSet(key, tempSet);
-        return new ArrayList<String>(tempSet);
-    }
-
 
     public void Add_New() {
 
@@ -255,7 +257,7 @@ public class Manual extends AppCompatActivity {
                 shoppingList.add(preferredCase(input.getText().toString()));
                 Collections.sort(shoppingList);
                 storeArrayVal(shoppingList, getApplicationContext(), activityArrayValues, activityKey);
-                Toast.makeText(getApplicationContext(),preferredCase(input.getText().toString())+ " Is added", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), preferredCase(input.getText().toString()) + " Is added", Toast.LENGTH_SHORT).show();
                 lv.setAdapter(adapter);
             }
         });
@@ -268,18 +270,19 @@ public class Manual extends AppCompatActivity {
         builder.show();
 
     }
-    public void setCheck(ArrayList<String> My_list){
+
+    public void setCheck(ArrayList<String> My_list) {
         position = new int[shoppingListCheck.size()];
         items = shoppingListCheck.toArray(new String[shoppingListCheck.size()]);
 
-        for (int l = shoppingListCheck.size()-1; l >= 0; l--) {
+        for (int l = shoppingListCheck.size() - 1; l >= 0; l--) {
             if (My_list.contains(items[l])) {
                 String Found = items[l];
                 position[l] = shoppingList.indexOf(Found);
-                lv.setItemChecked(position[l],true);
+                lv.setItemChecked(position[l], true);
 
             }
         }
 
     }
-   }
+}

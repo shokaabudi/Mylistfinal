@@ -4,18 +4,20 @@
     tools:context="com.example.abud.mylist.Auto_Second">
 
 
-
-    <item android:id="@+id/action_add"
+    <item
+        android:id="@+id/action_add"
         android:icon="@drawable/ic_add_shopping_cart_white_48dp"
         android:title="@string/action_add"
         app:showAsAction="ifRoom" />
 
-    <item android:id="@+id/action_clear"
+    <item
+        android:id="@+id/action_clear"
         android:icon="@drawable/ic_delete_white_48dp"
         android:title="@string/action_clear"
         app:showAsAction="ifRoom" />
 
-    <item android:id="@+id/action_save"
+    <item
+        android:id="@+id/action_save"
         android:icon="@drawable/ic_save_white_24dp"
         android:title="@string/action_save"
         app:showAsAction="ifRoom" />

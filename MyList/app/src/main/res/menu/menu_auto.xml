@@ -2,23 +2,22 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
 
- >
+    >
 
 
     <item
         android:id="@+id/action_search"
-        android:orderInCategory="100"
-        android:title="Search"
-
         android:icon="@drawable/ic_action_search"
-        app:showAsAction="always"
-         />
+        android:orderInCategory="100"
+
+        android:title="Search"
+        app:showAsAction="always" />
     <item
         android:id="@+id/done"
-        android:title="Done"
         android:icon="@drawable/ic_done_white_24dp"
-        app:showAsAction="always"
-        android:orderInCategory="101" />
+        android:orderInCategory="101"
+        android:title="Done"
+        app:showAsAction="always" />
 
 
 </menu>

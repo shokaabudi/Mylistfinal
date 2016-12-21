@@ -7,8 +7,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.SparseBooleanArray;
 import android.view.Menu;
@@ -20,6 +20,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -43,8 +44,29 @@ public class Auto_Second extends AppCompatActivity {
     String name;
     AlertDialog.Builder builder;
     String[] items;
-    int [] position;
+    int[] position;
 
+    public static String preferredCase(String original) {
+        if (original.isEmpty())
+            return original;
+
+        return original.substring(0, 1).toUpperCase() + original.substring(1).toLowerCase();
+    }
+
+    public static void storeArrayVal(ArrayList<String> inArrayList, Context context, String db, String key) {
+        Set<String> WhatToWrite = new HashSet<String>(inArrayList);
+        SharedPreferences WordSearchPutPrefs = context.getSharedPreferences(db, Activity.MODE_PRIVATE);
+        SharedPreferences.Editor prefEditor = WordSearchPutPrefs.edit();
+        prefEditor.putStringSet(key, WhatToWrite);
+        prefEditor.commit();
+    }
+
+    public static ArrayList getArrayVal(Context dan, String db, String key) {
+        SharedPreferences WordSearchGetPrefs = dan.getSharedPreferences(db, Activity.MODE_PRIVATE);
+        Set<String> tempSet = new HashSet<String>();
+        tempSet = WordSearchGetPrefs.getStringSet(key, tempSet);
+        return new ArrayList<String>(tempSet);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,11 +98,11 @@ public class Auto_Second extends AppCompatActivity {
             adapter = new ArrayAdapter(this, R.layout.rowlayout, R.id.txt_lan, shoppingList);
             autoSecondList.setAdapter(adapter);
             storeArrayVal(shoppingList, getApplicationContext(), db, key);
-            shoppingListCheck=getArrayVal(getApplicationContext(),"positionAutoSecond", "posAutoSecond");
+            shoppingListCheck = getArrayVal(getApplicationContext(), "positionAutoSecond", "posAutoSecond");
 
             if (!shoppingListCheck.isEmpty()) {
                 setCheck(shoppingList);
-        }
+            }
         }
 
         autoSecondList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -94,8 +116,8 @@ public class Auto_Second extends AppCompatActivity {
                     adapter.notifyDataSetChanged();
                 } else
                     shoppingListCheck.add(selectedItem);
-                    storeArrayVal(shoppingListCheck, getApplicationContext(), "positionAutoSecond", "posAutoSecond");
-                    adapter.notifyDataSetChanged();
+                storeArrayVal(shoppingListCheck, getApplicationContext(), "positionAutoSecond", "posAutoSecond");
+                adapter.notifyDataSetChanged();
 
             }
 
@@ -124,7 +146,7 @@ public class Auto_Second extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_add) {
-             Intent intent = new Intent();
+            Intent intent = new Intent();
             intent.setClass(Auto_Second.this, Auto.class);
             this.finish();
             startActivity(intent);
@@ -198,28 +220,6 @@ public class Auto_Second extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public static String preferredCase(String original) {
-        if (original.isEmpty())
-            return original;
-
-        return original.substring(0, 1).toUpperCase() + original.substring(1).toLowerCase();
-    }
-
-    public static void storeArrayVal(ArrayList<String> inArrayList, Context context, String db, String key) {
-        Set<String> WhatToWrite = new HashSet<String>(inArrayList);
-        SharedPreferences WordSearchPutPrefs = context.getSharedPreferences(db, Activity.MODE_PRIVATE);
-        SharedPreferences.Editor prefEditor = WordSearchPutPrefs.edit();
-        prefEditor.putStringSet(key, WhatToWrite);
-        prefEditor.commit();
-    }
-
-    public static ArrayList getArrayVal(Context dan, String db, String key) {
-        SharedPreferences WordSearchGetPrefs = dan.getSharedPreferences(db, Activity.MODE_PRIVATE);
-        Set<String> tempSet = new HashSet<String>();
-        tempSet = WordSearchGetPrefs.getStringSet(key, tempSet);
-        return new ArrayList<String>(tempSet);
-    }
-
     @Override
     public void onBackPressed() {
         Intent intent = new Intent();
@@ -228,16 +228,17 @@ public class Auto_Second extends AppCompatActivity {
         startActivity(intent);
         super.onBackPressed();
     }
-    public void setCheck(ArrayList<String> My_list){
+
+    public void setCheck(ArrayList<String> My_list) {
         position = new int[shoppingListCheck.size()];
         items = shoppingListCheck.toArray(new String[shoppingListCheck.size()]);
 
-        for (int l = shoppingListCheck.size()-1; l >= 0; l--) {
+        for (int l = shoppingListCheck.size() - 1; l >= 0; l--) {
             if (My_list.contains(items[l])) {
                 String Found = items[l];
                 position[l] = shoppingList.indexOf(Found);
-                autoSecondList.setItemChecked(position[l],true);
-        }
+                autoSecondList.setItemChecked(position[l], true);
+            }
         }
 
     }
